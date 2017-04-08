@@ -1,0 +1,86 @@
+projects:
+    type:     rest
+    resource: '@AppBundle/Controller/Rest/ProjectsController.php'
+
+project_files:
+    type:     rest
+    parent:   projects
+    resource: '@AppBundle/Controller/Rest/ProjectFilesController.php'
+
+project_quotes:
+    type: rest
+    parent:   projects
+    resource: '@AppBundle/Controller/Rest/ProjectQuotesController.php'
+
+project_quotes_units:
+    type: rest
+    parent:   project_quotes
+    resource: '@AppBundle/Controller/Rest/ProjectQuotesUnitsController.php'
+
+project_quotes_accessories:
+    type: rest
+    parent:   project_quotes
+    resource: '@AppBundle/Controller/Rest/ProjectQuotesAccessoriesController.php'
+
+project_reorder_quotes:
+    path: /projects/{project_id}/reorder_quotes
+    defaults: {_controller: AppBundle\Controller\Rest\ProjectQuotesController::reorderAction}
+    requirements:
+        project_id: \d+
+
+project_quotes_reorder_units:
+    path: /projects/{project_id}/quotes/{quote_id}/reorder_units
+    defaults: {_controller: AppBundle\Controller\Rest\ProjectQuotesUnitsController::reorderAction}
+    requirements:
+        project_id: \d+
+        quote_id: \d+
+
+project_quotes_reorder_accessories:
+    path: /projects/{project_id}/quotes/{quote_id}/reorder_accessories
+    defaults: {_controller: AppBundle\Controller\Rest\ProjectQuotesAccessoriesController::reorderAction}
+    requirements:
+        project_id: \d+
+        quote_id: \d+
+
+filling_types_reorder:
+    path: /reorder_fillingtypes
+    defaults: {_controller: AppBundle\Controller\Rest\FillingTypesController::reorderAction}
+
+profile_reorder:
+    path: /reorder_profiles
+    defaults: {_controller: AppBundle\Controller\Rest\ProfilesController::reorderAction}
+
+profile:
+    type: rest
+    resource: '@AppBundle/Controller/Rest/ProfilesController.php'
+
+dictionary_reorder:
+    path: /reorder_dictionaries
+    defaults: {_controller: AppBundle\Controller\Rest\DictionaryController::reorderAction}
+
+dictionary:
+    type: rest
+    resource: '@AppBundle/Controller/Rest/DictionaryController.php'
+
+dictionary_reorder_entries:
+    path: /dictionaries/{dictionary_id}/reorder_entries
+    defaults: {_controller: AppBundle\Controller\Rest\DictionaryEntryController::reorderAction}
+    requirements:
+        project_id: \d+
+
+dictionary_entry:
+    type:     rest
+    parent:   dictionary
+    resource: '@AppBundle/Controller/Rest/DictionaryEntryController.php'
+
+filling_type:
+    type: rest
+    resource: '@AppBundle/Controller/Rest/FillingTypesController.php'
+
+users:
+    type: rest
+    resource: '@AppBundle/Controller/Rest/UsersController.php'
+
+files:
+    type: rest
+    resource: '@AppBundle/Controller/Rest/FilesController.php'

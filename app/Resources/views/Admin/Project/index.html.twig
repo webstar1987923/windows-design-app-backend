@@ -1,0 +1,114 @@
+{% extends 'Admin/layout.html.twig' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">{{ 'projects.pages.index' |trans({}, 'AppBundle') }}
+                <small>List</small>
+            </h1>
+        </div>
+        <!-- /.col-lg-12 -->
+        <div class="col-lg-12">
+            {% include '::_flash.html.twig' %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="btn-group">
+                <a class="btn btn-success" title="Create new project" href="{{ path('admin_projects_create') }}">
+                    <i class="glyphicon glyphicon-plus"></i> {{ 'actions.create' |trans({}, 'AppBundle') }}
+                </a>
+                <a id="btn-clone" class="btn btn-success" title="Create new project from selected" href="{{ path('admin_projects_create') }}">
+                    <i class="glyphicon glyphicon-copy"></i> {{ 'actions.clone' |trans({}, 'AppBundle') }}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <br/>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <table class="records_list table table-striped">
+                <thead>
+                <tr>
+                    <th>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="select_all_projects"> All
+                            </label>
+                        </div>
+                    </th>
+                    <th>{{ 'projects.fields.id' |trans({}, 'Entities') }}</th>
+                    <th>{{ 'projects.fields.client_name' |trans({}, 'Entities') }}</th>
+                    <th>{{ 'projects.fields.client_company_name' |trans({}, 'Entities') }}</th>
+                    <th>{{ 'projects.fields.client_phone' |trans({}, 'Entities') }}</th>
+                    <th>{{ 'projects.fields.client_email' |trans({}, 'Entities') }}</th>
+                    <th>{{ 'projects.fields.client_address' |trans({}, 'Entities') }}</th>
+                    <th>{{ 'projects.fields.project_name' |trans({}, 'Entities') }}</th>
+                    <th>{{ 'projects.fields.project_address' |trans({}, 'Entities') }}</th>
+                    <th>Related objects</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="data-list">
+                {% for entity in entities %}
+                    <tr>
+                        <td>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="selected[]" value="{{ entity.getId() }}">
+                                </label>
+                            </div>
+                        </td>
+                        <td>{{ entity.getId() }}</td>
+                        <td>{{ entity.getClientName }}</td>
+                        <td>{{ entity.getClientCompanyName }}</td>
+                        <td>{{ entity.getClientPhone }}</td>
+                        <td>{{ entity.getClientEmail }}</td>
+                        <td>{{ entity.getClientAddress }}</td>
+                        <td>{{ entity.getProjectName }}</td>
+                        <td>{{ entity.getProjectAddress }}</td>
+                        <td>
+                            <ul class="list-inline list-unstyled">
+                                <li>
+                                    <a class="label label-primary" href="{{ path('admin_project_files', {'project_id':entity.getId()} ) }}">
+                                        {{ 'projects.fields.files' |trans({}, 'Entities') }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </td>
+                        <td class="btn-group" style="width: 100px;">
+                            <a class="btn btn-success btn-sm" href="{{ path('admin_projects_clone', {'id': entity.getId()}) }}" title="{{ 'actions.clone' |trans({}, 'AppBundle') }}">
+                                <i class="glyphicon glyphicon-copy"></i>
+                            </a>
+                            <a class="btn btn-warning btn-sm" href="{{ path('admin_projects_update', {'id': entity.getId()}) }}" title="{{ 'actions.edit' |trans({}, 'AppBundle') }}">
+                                <i class="glyphicon glyphicon-pencil"></i>
+                            </a>
+                            <a class="btn btn-danger btn-sm" href="{{ path('admin_projects_delete_confirm', {'id': entity.getId()}) }}" title="{{ 'actions.delete' |trans({}, 'AppBundle') }}">
+                                <i class="glyphicon glyphicon-remove"></i>
+                            </a>
+                        </td>
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            {#<a href="#" class="btn btn-success">#}
+            {#<i class="glyphicon glyphicon-plus-sign"></i>#}
+            {#{{ 'actions.create' |trans({}, 'AppBundle') }}#}
+            {#</a>#}
+
+
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/admin/projects.js') }}"></script>
+{% endblock %}

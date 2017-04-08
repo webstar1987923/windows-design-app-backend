@@ -1,0 +1,36 @@
+{% extends 'Admin/layout.html.twig' %}
+
+{% block content -%}
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Project <small>{{ 'projects.pages.clone'|trans({}, 'AppBundle') }}</small></h1>
+        </div>
+        <!-- /.col-lg-12 -->
+        <div class="col-lg-12">
+            {% include '::_flash.html.twig' %}
+        </div>
+    </div>
+
+    <!-- Project section navigation -->
+    <div class="row">
+        <div class="col-lg-12">
+            <ol class="breadcrumb">
+                <li><a href="{{ path('admin_projects') }}" title="{{ 'projects.description' |trans({}, 'AppBundle') }}"><i class="fa fa-list fa-fw"></i> {{ 'projects.title' |trans({}, 'AppBundle') }}</a></li>
+                <li class="active">{{ 'projects.pages.update' |trans({}, 'AppBundle') }}</li>
+            </ol>
+        </div>
+    </div><!-- /Project section navigation -->
+
+    <div class="info" style="margin-bottom: 15px; color:#555;">
+        <i class="glyphicon glyphicon-info-sign"></i>
+        <span>Units, accessories and files will be cloned</span>
+    </div>
+
+    {{ form(clone_form) }}
+
+    <div class="btn-group">
+        <a class="btn btn-default" href="{{ path('admin_projects') }}">
+            {{ 'actions.back_to_list'|trans({}, 'AppBundle') }}
+        </a>
+    </div>
+{% endblock %}

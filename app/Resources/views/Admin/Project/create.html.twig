@@ -1,0 +1,271 @@
+{% extends 'Admin/layout.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/jquery.fileupload.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/jquery.fileupload-ui.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Project <small>{{ 'projects.pages.create'|trans({}, 'AppBundle') }}</small></h1>
+        </div>
+        <!-- /.col-lg-12 -->
+        <div class="col-lg-12">
+            {% include '::_flash.html.twig' %}
+        </div>
+    </div>
+
+    <!-- Project section navigation -->
+    <div class="row">
+        <div class="col-lg-12">
+            <ol class="breadcrumb">
+                <li><a href="{{ path('admin_projects') }}" title="{{ 'projects.description' |trans({}, 'AppBundle') }}"><i class="fa fa-list fa-fw"></i> {{ 'projects.title' |trans({}, 'AppBundle') }}</a></li>
+                <li class="active">{{ 'projects.pages.create' |trans({}, 'AppBundle') }}</li>
+            </ol>
+        </div>
+    </div><!-- /Project section navigation -->
+
+    {{ form(form) }}
+
+    <div class="row">
+        <div class="col-lg-12">
+            <!-- The fileinput-button span is used to style the file input field as button -->
+            <span class="btn btn-success fileinput-button">
+                <i class="glyphicon glyphicon-plus"></i>
+                <span>Select files to upload...</span>
+                <!-- The file input field used as target for the file upload widget -->
+                <input id="fileupload" type="file" name="files[]" multiple>
+            </span>
+            <br>
+            <br>
+            <!-- The global progress bar -->
+            <div id="progress" class="progress">
+                <div class="progress-bar progress-bar-success"></div>
+            </div>
+            <!-- The container for the uploaded files -->
+            <div id="files" class="files"></div>
+        </div>
+    </div>
+
+    <div class="btn-group">
+        <a class="btn btn-success" onclick="createProjectWithFiles();">
+            {{ 'actions.create'|trans({}, 'AppBundle') }}
+        </a>
+
+        <a class="btn btn-default" href="{{ path('admin_projects') }}">
+            {{ 'actions.back_to_list'|trans({}, 'AppBundle') }}
+        </a>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+<script src="{{ asset('js/fileupload/vendor/jquery.ui.widget.js') }}"></script>
+<script src="{{ asset('js/fileupload/vendor/load-image.all.min.js') }}"></script>
+<script src="{{ asset('js/fileupload/vendor/canvas-to-blob.min.js') }}"></script>
+<script src="{{ asset('js/fileupload/jquery.iframe-transport.js') }}"></script>
+<script src="{{ asset('js/fileupload/jquery.fileupload.js') }}"></script>
+<script src="{{ asset('js/fileupload/jquery.fileupload-process.js') }}"></script>
+<script src="{{ asset('js/fileupload/jquery.fileupload-image.js') }}"></script>
+<script src="{{ asset('js/fileupload/jquery.fileupload-audio.js') }}"></script>
+<script src="{{ asset('js/fileupload/jquery.fileupload-video.js') }}"></script>
+<script src="{{ asset('js/fileupload/jquery.fileupload-validate.js') }}"></script>
+
+<script src="{{ asset('js/jwt.session.workaround.js') }}"></script>
+
+    <script>
+        var token, user = null;
+
+        $(document).ready(function(){
+            token = window.localStorage.getItem('prossimo.token');
+            if (token == null)
+                getJwtToken().then(tokenReceivedSuccess,tokenReceiveError);
+            else {
+                getCurrentUser(token).then(main,error);
+            }
+        });
+
+        function main() {
+            console.log('Main main');
+        }
+
+        function error() {
+            console.log('Main error');
+            getJwtToken().then(tokenReceivedSuccess,tokenReceiveError);
+        }
+
+        function getCurrentUser(token) {
+            var d = $.Deferred();
+            $.ajax({
+                dataType: "json",
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader("Accept", "application/json");
+                    // xhr.setRequestHeader("ContenInvalid JWT Tokent-type", "application/json; charset=utf-8");
+                    xhr.setRequestHeader("Authorization", "Bearer " + token);
+                },
+                url: window.prossimo.api_base_path + '/api/users/current',
+                success: function (data, textStatus) {
+                    console.log('getCurrentUser success: ', textStatus);
+                    d.resolve({
+                        success: true,
+                        data: {
+                            username: data.username
+                        }
+                    });
+                },
+                error: function(error, txtStatus) {
+                    console.log('getCurrentUser error: ', txtStatus);
+                    d.reject({
+                        success: false,
+                        errors: txtStatus
+                    });
+                }
+            });
+            return d.promise();
+        }
+
+        function createProjectWithFiles() {
+            var form = $("form[name='project']");
+            $('#files a').each(function (index, value) {
+                var href = $(this).attr('href');
+                var uuid = extractUuid(href);
+                var input = $("<input>").attr({"type":"hidden","name":"preloaded_files[]"}).val(uuid);
+                form.append(input);
+            });
+            form.submit();
+        }
+
+        function tokenReceivedSuccess(data) {
+            console.log('tokenReceivedSuccess');
+            if (data.success == true) {
+                token = data.data.token; console.log('TOKEN:', token);
+                user = data.data.user; console.log('USER:', user);
+                window.localStorage.setItem('prossimo.token', token);
+                main(); // run main function only when token was received
+            } else
+                console.log('Token error:', data.errors);
+        }
+
+        var re = /([a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12})/i;
+        function extractUuid(value) {
+
+            // the RegEx will match the first occurrence of the pattern
+            var match = re.exec(value);
+
+            // result is an array containing:
+            // [0] the entire string that was matched by our RegEx
+            // [1] the first (only) group within our match, specified by the
+            // () within our pattern, which contains the GUID value
+
+            return match ? match[1] : null;
+        }
+
+        /*jslint unparam: true, regexp: true */
+        /*global window, $ */
+        $(function () {
+            'use strict';
+            // Change this to the location of your server-side upload handler:
+            var url = window.prossimo.api_base_path + '/api/files/handlers',
+                    uploadButton = $('<button/>')
+                            .addClass('btn btn-primary')
+                            .prop('disabled', true)
+                            .text('Processing...')
+                            .on('click', function () {
+                                var $this = $(this),
+                                        data = $this.data();
+                                $this
+                                        .off('click')
+                                        .text('Abort')
+                                        .on('click', function () {
+                                            $this.remove();
+                                            data.abort();
+                                        });
+                                data.submit().always(function () {
+                                    $this.remove();
+                                });
+                            });
+            $('#fileupload').fileupload({
+                url: url,
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader("Accept", "application/json");
+                    // xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
+                    xhr.setRequestHeader("Authorization", "Bearer " + token);
+                },
+                dataType: 'json',
+                autoUpload: false,
+                acceptFileTypes: /(\.|\/)(gif|jpe?g|png|pdf|docx?|rtf|xlsx?)$/i,
+                maxFileSize: 99999000,
+                // Enable image resizing, except for Android and Opera,
+                // which actually support image resizing, but fail to
+                // send Blob objects via XHR requests:
+                disableImageResize: /Android(?!.*Chrome)|Opera/
+                        .test(window.navigator.userAgent),
+                previewMaxWidth: 100,
+                previewMaxHeight: 100,
+                previewCrop: true
+            }).on('fileuploadadd', function (e, data) {
+                data.context = $('<div/>').appendTo('#files');
+                $.each(data.files, function (index, file) {
+                    var node = $('<p/>')
+                            .append($('<span/>').text(file.name));
+                    if (!index) {
+                        node
+                                .append('<br>')
+                                .append(uploadButton.clone(true).data(data));
+                    }
+                    node.appendTo(data.context);
+                });
+            }).on('fileuploadprocessalways', function (e, data) {
+                var index = data.index,
+                        file = data.files[index],
+                        node = $(data.context.children()[index]);
+                if (file.preview) {
+                    node
+                            .prepend('<br>')
+                            .prepend(file.preview);
+                }
+                if (file.error) {
+                    node
+                            .append('<br>')
+                            .append($('<span class="text-danger"/>').text(file.error));
+                }
+                if (index + 1 === data.files.length) {
+                    data.context.find('button')
+                            .text('Upload')
+                            .prop('disabled', !!data.files.error);
+                }
+            }).on('fileuploadprogressall', function (e, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $('#progress .progress-bar').css(
+                        'width',
+                        progress + '%'
+                );
+            }).on('fileuploaddone', function (e, data) {
+                $.each(data.result.files, function (index, file) {
+                    if (file.url) {
+                        var link = $('<a>')
+                                .attr('target', '_blank')
+                                .prop('href', file.url);
+                        $(data.context.children()[index])
+                                .wrap(link);
+                    } else if (file.error) {
+                        var error = $('<span class="text-danger"/>').text(file.error);
+                        $(data.context.children()[index])
+                                .append('<br>')
+                                .append(error);
+                    }
+                });
+            }).on('fileuploadfail', function (e, data) {
+                $.each(data.files, function (index) {
+                    var error = $('<span class="text-danger"/>').text('File upload failed.');
+                    $(data.context.children()[index])
+                            .append('<br>')
+                            .append(error);
+                });
+            }).prop('disabled', !$.support.fileInput)
+                    .parent().addClass($.support.fileInput ? undefined : 'disabled');
+        });
+    </script>
+{% endblock %}

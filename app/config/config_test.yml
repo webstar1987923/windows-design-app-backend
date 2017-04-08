@@ -1,0 +1,44 @@
+imports:
+    - { resource: config_dev.yml }
+
+framework:
+    test: ~
+    session:
+        storage_id: session.storage.mock_file
+    profiler:
+        collect: false
+
+web_profiler:
+    toolbar: false
+    intercept_redirects: false
+
+swiftmailer:
+    disable_delivery: true
+
+doctrine:
+    dbal:
+        connections:
+            sqlite:
+                driver:  pdo_sqlite
+                host:     localhost
+                memory: true
+                charset: utf8
+    orm:
+        entity_managers:
+            default:
+                connection: default
+                mappings:
+                    AppBundle:  ~
+            sqlite:
+                connection: sqlite
+                mappings:
+                    AppBundle:  ~
+
+parameters:
+    test.client.parameters:
+        HTTP_HOST: prossimo.local
+
+security:
+    firewalls:
+        main:
+            http_basic: ~

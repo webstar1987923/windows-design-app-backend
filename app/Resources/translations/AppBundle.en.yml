@@ -1,0 +1,79 @@
+actions:
+    accept: OK
+    back_to_list: 'Back to list'
+    cancel: Cancel
+    confirm_delete: 'Confirm Delete'
+    create: Create
+    delete: Delete
+    export: Export
+    update: Update
+    edit: Edit
+    show: Show
+    sync: Synchronize
+    download: Download
+    clone: Clone
+    clear_temp: 'Clear temporary directory'
+    change_password: 'Change password'
+    lock: 'User is not banned. Click to ban'
+    unlock: 'User is banned. Click to unban'
+    enable: 'User is disabled. Click to enable'
+    disable: 'User is enabled. Click to disable'
+
+
+
+dashboard:
+    title: Dashboard
+    description: 'Control panel'
+
+setting:
+    title: Settings
+    description: 'Application settings'
+    pages:
+        thumbnails: 'Thumbnails settings'
+        backups: 'Backups settings'
+
+backup:
+    title: Backup
+    description: 'Application backup'
+
+projects:
+    title: Projects
+    description: ''
+    pages:
+        index: 'Projects'
+        create: 'Create project'
+        clone: 'Clone project'
+        update: 'Update project'
+        remove_conform: 'Confirm remove project'
+
+files:
+    title: 'Project files'
+    description: 'Files associated with project'
+    pages:
+        index: 'Files'
+    actions:
+        link_to_user: 'Link file to user'
+        link_to_project: 'Link file to project'
+
+admin_files:
+    title: 'Files'
+    description: 'All system files'
+    pages:
+        index: 'Files'
+        create: 'Create new file'
+    fields:
+        project: 'Project'
+
+admin_users:
+    title: 'Users'
+    description: 'Users list'
+    pages:
+        index: 'Users'
+        create: 'Create user'
+        update: 'Update user'
+        remove_conform: 'Confirm remove user'
+        update_password: 'Update password'
+
+
+errors:
+    item_in_use: 'Item in use and could not be deleted'

@@ -1,0 +1,27 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <div class="row">
+            <div class="col-xs-3">
+                <i class="fa fa-database fa-5x"></i>
+            </div>
+            <div class="col-xs-9 text-right">
+                <div class="huge">Backups</div>
+                <div>Backups count: {{ view_model.backups_count }} (#TODO)</div>
+                <div>Last backup date: {{ view_model.backups_last_date }} (#TODO)</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <a href="{{ path('admin_backup_process') }}" style="color: #FFF;" title="Create backup"><i class="fa fa-plus"></i>  Create backup</a><br />
+                <a href="#" style="color: #FFF;" title="Download latest backup file"><i class="fa fa-download"></i> Download latest (#TODO)</a>
+            </div>
+        </div>
+    </div>
+    <a href="{{ path('admin_backup') }}">
+        <div class="panel-footer">
+            <span class="pull-left">All backups</span>
+            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+            <div class="clearfix"></div>
+        </div>
+    </a>
+</div>

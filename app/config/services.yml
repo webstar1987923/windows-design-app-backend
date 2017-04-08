@@ -1,0 +1,74 @@
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/book/service_container.html
+parameters:
+#    parameter_name: value
+
+services:
+#    service_name:
+#        class: AppBundle\Directory\ClassName
+#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    app.manager.app_settings:
+        class: AppBundle\Manager\AppSettingsManager
+        arguments: ['@doctrine.orm.entity_manager']
+
+    app.manager.files:
+        class: AppBundle\Manager\FilesManager
+        calls:
+            - [ setContainer, [ '@service_container' ] ]
+        arguments:
+            - "@app.manager.files.http_client"
+
+    app.manager.files.http_client:
+        class: GuzzleHttp\Client
+        public: false
+
+    app.manager.project_file:
+        class: AppBundle\Manager\ProjectFileManager
+        arguments:
+            - "@app.manager.files"
+            - "@doctrine.orm.default_entity_manager"
+
+    app.fetch_remote:
+        class: AppBundle\Lib\FetchRemote
+        
+    doctrine.timestampable.listener:
+        class: AppBundle\Listener\TimestampableListener
+        tags:
+            - { name: doctrine.event_listener, event: prePersist, method: prePersist }
+
+    doctrine.auditable.listener:
+        class: AppBundle\Listener\AuditableListener
+        arguments: ['@security.token_storage']
+        tags:
+            - { name: doctrine.event_listener, event: prePersist, method: prePersist }
+
+    fos_user.user_provider.username:
+        class: AppBundle\Security\UserProvider
+        arguments: ['@fos_user.user_manager']
+
+    gedmo.listener.softdeleteable:
+        class: Gedmo\SoftDeleteable\SoftDeleteableListener
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+        calls:
+            - [ setAnnotationReader, [ '@annotation_reader' ] ]
+
+    form_errors:
+        class: AppBundle\Form\FormErrors
+
+    helpers.imagehelper:
+            class: AppBundle\Helpers\ImageHelper
+
+    helpers.pdfhelper:
+            class: AppBundle\Helpers\PDFHelper
+
+    app.bcrypt_encoder:
+        class: AppBundle\Security\Encoder\BCryptPasswordEncoder
+        arguments: [13]
+
+#    app.repository.binary_file:
+#        class: AppBundle\Repository\BinaryFileRepository
+#        factory: ["@doctrine", getRepository]
+#        arguments: [@profiler.storage, @?]
+#        calls:
+#            - [ setContainer, [ @service_container ] ]

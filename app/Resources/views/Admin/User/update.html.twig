@@ -1,0 +1,54 @@
+{% extends 'Admin/layout.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Users
+                <small>{{ 'admin_users.pages.update'|trans({}, 'AppBundle') }} <i>{{ entity.username }}</i></small>
+            </h1>
+        </div>
+        <!-- /.col-lg-12 -->
+        <div class="col-lg-12">
+            {% include '::_flash.html.twig' %}
+        </div>
+    </div>
+
+    <!-- Users section navigation -->
+    <div class="row">
+        <div class="col-lg-12">
+            <ol class="breadcrumb">
+                <li><a href="{{ path('admin_users') }}" title="{{ 'admin_users.description' |trans({}, 'AppBundle') }}"><i class="fa fa-list fa-fw"></i> {{ 'admin_users.title' |trans({}, 'AppBundle') }}</a></li>
+                <li class="active">{{ 'admin_users.pages.update' |trans({}, 'AppBundle') }}</li>
+            </ol>
+        </div>
+    </div><!-- /Users section navigation -->
+
+    {{ form(edit_form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    <div class="btn-group">
+        <a class="btn btn-success" onclick="submitHandler()">
+            {{ 'actions.update'|trans({}, 'AppBundle') }}
+        </a>
+
+        <a class="btn btn-default" href="{{ path('admin_users') }}">
+            {{ 'actions.back_to_list'|trans({}, 'AppBundle') }}
+        </a>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        function submitHandler() {
+            var $form = $("form[name='users']");
+            $form.submit();
+        }
+    </script>
+
+
+{% endblock %}

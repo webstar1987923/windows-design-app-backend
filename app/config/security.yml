@@ -1,0 +1,73 @@
+# To get started with security, check out the documentation:
+# http://symfony.com/doc/current/book/security.html
+security:
+    encoders:
+        AppBundle\Entity\User:
+            id: app.bcrypt_encoder
+
+    role_hierarchy:
+        ROLE_MANAGER:      ROLE_USER
+        ROLE_API:          ROLE_USER
+        ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+
+    # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
+    providers:
+        fos_userbundle:
+            id: fos_user.user_provider.username
+
+    firewalls:
+        # disables authentication for assets and the profiler, adapt it according to your needs
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+
+        register:
+            pattern: ^/api/register
+            anonymous: ~
+            security: false
+
+        files:
+            pattern: ^/api/files/.*/(download|thumbnail)$
+            anonymous: ~
+            security: false
+
+        login:
+                pattern:  ^/api/login
+                provider: fos_userbundle
+                stateless: true
+                anonymous: true
+                form_login:
+                    check_path:               /api/login_check
+                    success_handler:          lexik_jwt_authentication.handler.authentication_success
+                    failure_handler:          lexik_jwt_authentication.handler.authentication_failure
+                    require_previous_session: false
+
+        api:
+            pattern:   ^/api
+            stateless: true
+            provider: fos_userbundle
+            lexik_jwt: ~
+
+        main:
+            pattern: ^/
+            form_login:
+                provider: fos_userbundle
+                csrf_provider: security.csrf.token_manager # Use form.csrf_provider instead for Symfony <2.4
+                default_target_path: /admin
+
+            logout:
+                target: /login
+                path: /logout
+        
+            anonymous:    true
+
+    access_control:
+        - { path: ^/api/files, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/, role: ROLE_ADMIN }
+        - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api,       roles: [IS_AUTHENTICATED_FULLY, ROLE_API] }
